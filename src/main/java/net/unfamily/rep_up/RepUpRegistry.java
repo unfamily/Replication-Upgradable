@@ -14,10 +14,12 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.unfamily.rep_up.block.AbyssalMatterTankBlock;
 import net.unfamily.rep_up.block.DeepMatterTankBlock;
+import net.unfamily.rep_up.block.EnergyMaterializerBlock;
 import net.unfamily.rep_up.block.RepImpBlock;
 import net.unfamily.rep_up.block.RepImpBlockEntity;
 import net.unfamily.rep_up.block.tile.AbyssalMatterTankBlockEntity;
 import net.unfamily.rep_up.block.tile.DeepMatterTankBlockEntity;
+import net.unfamily.rep_up.block.tile.EnergyMaterializerBlockEntity;
 
 import java.util.function.Supplier;
 
@@ -36,6 +38,7 @@ public class RepUpRegistry {
 
     private static Supplier<BlockEntityType<DeepMatterTankBlockEntity>> deepMatterTankType;
     private static Supplier<BlockEntityType<AbyssalMatterTankBlockEntity>> abyssalMatterTankType;
+    private static Supplier<BlockEntityType<EnergyMaterializerBlockEntity>> energyMatType;
 
     public static final DeferredHolder<Block, Block> DEEP_MATTER_TANK = BLOCKS.register("deep_matter_tank",
             () -> new DeepMatterTankBlock("deep_matter_tank", () -> deepMatterTankType.get()));
@@ -55,9 +58,19 @@ public class RepUpRegistry {
             (DeferredHolder<BlockEntityType<?>, BlockEntityType<AbyssalMatterTankBlockEntity>>) (Object) BLOCK_ENTITY_TYPES.register("abyssal_matter_tank",
                     () -> BlockEntityType.Builder.of(((AbyssalMatterTankBlock) ABYSSAL_MATTER_TANK.get()).getTileEntityFactory(), ABYSSAL_MATTER_TANK.get()).build(null));
 
+    public static final DeferredHolder<Block, Block> ENERGY_MAT = BLOCKS.register("energy_mat",
+            () -> new EnergyMaterializerBlock("energy_mat", () -> energyMatType.get()));
+    public static final DeferredHolder<Item, Item> ENERGY_MAT_ITEM = ITEMS.register("energy_mat",
+            () -> new BlockItem(ENERGY_MAT.get(), new Item.Properties()));
+    @SuppressWarnings("unchecked")
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyMaterializerBlockEntity>> BLOCK_ENTITY_ENERGY_MAT =
+            (DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyMaterializerBlockEntity>>) (Object) BLOCK_ENTITY_TYPES.register("energy_mat",
+                    () -> BlockEntityType.Builder.of(((EnergyMaterializerBlock) ENERGY_MAT.get()).getTileEntityFactory(), ENERGY_MAT.get()).build(null));
+
     public static void register(IEventBus modEventBus) {
         deepMatterTankType = () -> BLOCK_ENTITY_DEEP_MATTER_TANK.get();
         abyssalMatterTankType = () -> BLOCK_ENTITY_ABYSSAL_MATTER_TANK.get();
+        energyMatType = () -> BLOCK_ENTITY_ENERGY_MAT.get();
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         BLOCK_ENTITY_TYPES.register(modEventBus);
@@ -86,6 +99,23 @@ public class RepUpRegistry {
                     return null;
                 },
                 REP_IMP.get()
+        );
+        event.registerBlockEntity(
+                Capabilities.EnergyStorage.BLOCK,
+                BLOCK_ENTITY_ENERGY_MAT.get(),
+                (blockEntity, context) -> blockEntity.getEnergyStorage()
+        );
+        event.registerBlock(
+                Capabilities.EnergyStorage.BLOCK,
+                (level, blockPos, blockState, blockEntity, direction) -> {
+                    if (blockState.getBlock() instanceof INetworkDirectionalConnection connection
+                            && connection.canConnect(level, blockPos, blockState, direction)
+                            && blockEntity instanceof ReplicationMachine<?> machine) {
+                        return machine.getEnergyStorage();
+                    }
+                    return null;
+                },
+                ENERGY_MAT.get()
         );
     }
 }

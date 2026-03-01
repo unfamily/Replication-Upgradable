@@ -5,5 +5,9 @@
   "block.rep_up.deep_matter_tank": "Serbatoio Materia Profonda",
   "item.rep_up.deep_matter_tank": "Serbatoio Materia Profonda",
   "block.rep_up.abyssal_matter_tank": "Serbatoio Materia Abissale",
-  "item.rep_up.abyssal_matter_tank": "Serbatoio Materia Abissale"
+  "item.rep_up.abyssal_matter_tank": "Serbatoio Materia Abissale",
+  "block.rep_up.energy_mat": "Materializzatore Energetico",
+  "item.rep_up.energy_mat": "Materializzatore Energetico",
+  "gui.rep_up.energy_mat.production": "Produzione:",
+  "gui.rep_up.energy_mat.no_tanks_available": "Nessun serbatoio disponibile"
 }

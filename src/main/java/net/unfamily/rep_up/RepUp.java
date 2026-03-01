@@ -15,6 +15,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.unfamily.rep_up.block.RepImpBlock;
 import net.unfamily.rep_up.block.RepImpBlockEntity;
+import net.unfamily.rep_up.data.EnergyMatRecipeLoader;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
@@ -30,6 +31,7 @@ public class RepUp {
         NBTManager.getInstance().scanTileClassForAnnotations(RepImpBlockEntity.class);
         NBTManager.getInstance().scanTileClassForAnnotations(net.unfamily.rep_up.block.tile.DeepMatterTankBlockEntity.class);
         NBTManager.getInstance().scanTileClassForAnnotations(net.unfamily.rep_up.block.tile.AbyssalMatterTankBlockEntity.class);
+        NBTManager.getInstance().scanTileClassForAnnotations(net.unfamily.rep_up.block.tile.EnergyMaterializerBlockEntity.class);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::onBuildCreativeTab);
         NeoForge.EVENT_BUS.register(this);
@@ -69,11 +71,13 @@ public class RepUp {
             event.accept(new ItemStack(RepUpRegistry.REP_IMP.get()));
             event.accept(new ItemStack(RepUpRegistry.DEEP_MATTER_TANK.get()));
             event.accept(new ItemStack(RepUpRegistry.ABYSSAL_MATTER_TANK.get()));
+            event.accept(new ItemStack(RepUpRegistry.ENERGY_MAT_ITEM.get()));
         }
     }
 
     @net.neoforged.bus.api.SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         LOGGER.debug("RepUp server starting");
+        EnergyMatRecipeLoader.load();
     }
 }

@@ -40,5 +40,32 @@ public class Config {
         MATTER_TANKS.pop();
     }
 
+    private static final ModConfigSpec.Builder DEV = BUILDER.comment("Dev / external scripts. Base path for rep_up external data (e.g. energy_mat.json).").push("dev");
+
+    /** Base directory for rep_up external scripts; energy_mat uses <path>/energy_mat.json. Reusable for other features later. */
+    public static final ModConfigSpec.ConfigValue<String> EXTERNAL_SCRIPTS_PATH = DEV
+            .comment("Directory for rep_up external scripts. Energy Materializer: <this>/energy_mat.json. Default: kubejs/external_scripts/rep_up")
+            .define("externalScriptsPath", "kubejs/external_scripts/rep_up");
+
+    static {
+        DEV.pop();
+    }
+
+    private static final ModConfigSpec.Builder ENERGY_MATERIALIZER = BUILDER.comment("Energy Materializer (energy_mat): RF to matter conversion.").push("energy_materializer");
+
+    /** Energy storage capacity (RF). Default very high. */
+    public static final ModConfigSpec.IntValue ENERGY_MAT_ENERGY_CAPACITY = ENERGY_MATERIALIZER
+            .comment("Energy storage capacity (RF) for the Energy Materializer. Default: 100000000.")
+            .defineInRange("energyCapacity", 100000000, 1, Integer.MAX_VALUE);
+
+    /** Max production multiplier (1 = base rate; higher = more RF consumed and more matter per tick). Default 100. */
+    public static final ModConfigSpec.IntValue ENERGY_MAT_MAX_PRODUCTION = ENERGY_MATERIALIZER
+            .comment("Maximum production multiplier for the Energy Materializer (1–100). Production multiplies both energy cost and matter output per tick.")
+            .defineInRange("maxProduction", 100, 1, 100);
+
+    static {
+        ENERGY_MATERIALIZER.pop();
+    }
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 }

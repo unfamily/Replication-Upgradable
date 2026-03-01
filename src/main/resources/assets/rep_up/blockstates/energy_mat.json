@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "subfacing=east": { "model": "rep_up:block/energy_mat", "y": 90 },
+    "subfacing=north": { "model": "rep_up:block/energy_mat" },
+    "subfacing=south": { "model": "rep_up:block/energy_mat", "y": 180 },
+    "subfacing=west": { "model": "rep_up:block/energy_mat", "y": 270 }
+  }
+}

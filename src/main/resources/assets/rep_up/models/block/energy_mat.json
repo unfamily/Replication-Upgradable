@@ -1,0 +1,7 @@
+{
+  "parent": "replication:block/disintegrator",
+  "textures": {
+    "0": "rep_up:block/energy_mat",
+    "particle": "rep_up:block/energy_mat"
+  }
+}

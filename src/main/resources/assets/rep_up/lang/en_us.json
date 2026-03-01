@@ -5,5 +5,9 @@
   "block.rep_up.deep_matter_tank": "Deep Matter Tank",
   "item.rep_up.deep_matter_tank": "Deep Matter Tank",
   "block.rep_up.abyssal_matter_tank": "Abyssal Matter Tank",
-  "item.rep_up.abyssal_matter_tank": "Abyssal Matter Tank"
+  "item.rep_up.abyssal_matter_tank": "Abyssal Matter Tank",
+  "block.rep_up.energy_mat": "Energy Materializer",
+  "item.rep_up.energy_mat": "Energy Materializer",
+  "gui.rep_up.energy_mat.production": "Production:",
+  "gui.rep_up.energy_mat.no_tanks_available": "No tanks available"
 }

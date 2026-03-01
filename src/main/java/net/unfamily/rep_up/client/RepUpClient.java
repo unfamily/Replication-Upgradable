@@ -17,6 +17,7 @@ import net.unfamily.rep_up.block.RepImpBlock;
 import net.unfamily.rep_up.block.RepImpBlockEntity;
 import net.unfamily.rep_up.block.tile.AbyssalMatterTankBlockEntity;
 import net.unfamily.rep_up.block.tile.DeepMatterTankBlockEntity;
+import net.unfamily.rep_up.block.tile.EnergyMaterializerBlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -35,16 +36,21 @@ public class RepUpClient {
     private static final ResourceLocation PLATE_MODEL_ID = ResourceLocation.fromNamespaceAndPath(RepUp.MODID, "block/rep_imp_plate");
     private static final ModelResourceLocation PLATE_MODEL_KEY = new ModelResourceLocation(PLATE_MODEL_ID, "standalone");
 
+    private static final ResourceLocation BLADE_MODEL_ID = ResourceLocation.fromNamespaceAndPath(RepUp.MODID, "block/energy_mat_blade");
+    private static final ModelResourceLocation BLADE_MODEL_KEY = new ModelResourceLocation(BLADE_MODEL_ID, "standalone");
+
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(RepUpRegistry.BLOCK_ENTITY_REP_IMP.get(), RepImpRenderer::new);
         event.registerBlockEntityRenderer(RepUpRegistry.BLOCK_ENTITY_DEEP_MATTER_TANK.get(), RepUpMatterTankRenderer::new);
         event.registerBlockEntityRenderer(RepUpRegistry.BLOCK_ENTITY_ABYSSAL_MATTER_TANK.get(), RepUpMatterTankRenderer::new);
+        event.registerBlockEntityRenderer(RepUpRegistry.BLOCK_ENTITY_ENERGY_MAT.get(), EnergyMaterializerRenderer::new);
     }
 
     @SubscribeEvent
     public static void onRegisterAdditional(ModelEvent.RegisterAdditional event) {
         event.register(PLATE_MODEL_KEY);
+        event.register(BLADE_MODEL_KEY);
     }
 
     @SubscribeEvent
@@ -54,6 +60,12 @@ public class RepUpClient {
             RepImpRenderer.setPlateModel(baked);
         } else {
             RepUp.LOGGER.warn("rep_imp: could not find baked model {} (key {})", PLATE_MODEL_ID, PLATE_MODEL_KEY);
+        }
+        BakedModel blade = event.getModels().get(BLADE_MODEL_KEY);
+        if (blade != null && blade != event.getModelManager().getMissingModel()) {
+            EnergyMaterializerRenderer.setBladeModel(blade);
+        } else {
+            RepUp.LOGGER.warn("energy_mat: could not find baked model {} (key {})", BLADE_MODEL_ID, BLADE_MODEL_KEY);
         }
     }
 
