@@ -1,0 +1,1 @@
+{"required":true,"minVersion":"0.8","package":"net.unfamily.rep_up.mixin","compatibilityLevel":"JAVA_21","mixins":["MatterNetworkMixin"],"client":[],"injectors":{"defaultRequire":1}}

@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "rep_up:rep_imp",
+    "rep_up:deep_matter_tank",
+    "rep_up:abyssal_matter_tank"
+  ]
+}

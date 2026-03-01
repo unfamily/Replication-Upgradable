@@ -1,0 +1,7 @@
+{
+  "parent": "replication:block/replicator_enclosure",
+  "textures": {
+    "1": "rep_up:block/rep_imp",
+    "particle": "rep_up:block/rep_imp"
+  }
+}

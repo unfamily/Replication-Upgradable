@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "subfacing=east": { "model": "rep_up:block/abyssal_matter_tank", "y": 90 },
+    "subfacing=north": { "model": "rep_up:block/abyssal_matter_tank" },
+    "subfacing=south": { "model": "rep_up:block/abyssal_matter_tank", "y": 180 },
+    "subfacing=west": { "model": "rep_up:block/abyssal_matter_tank", "y": 270 }
+  }
+}
