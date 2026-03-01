@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BAB",
+    "ACA",
+    "BAB"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:gems/diamond"
+    },
+    "B": {
+      "tag": "c:ender_pearls"  
+    },
+    "C": {
+      "item": "replication:matter_tank"
+    }
+  },
+  "result": {
+    "id": "rep_up:deep_matter_tank",
+    "count": 1
+  }
+} 

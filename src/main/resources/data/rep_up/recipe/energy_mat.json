@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ADA",
+    "BCB",
+    "AEA"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:gems/emerald"
+    },
+    "B": {
+      "item": "minecraft:dragon_breath"
+    },
+    "C": {
+      "item": "replication:disintegrator"
+    },
+    "D": {
+      "tag": "c:nether_stars"
+    },
+    "E": {
+      "tag": "c:storage_blocks/redstone"
+    }
+  },
+  "result": {
+    "id": "rep_up:energy_mat",
+    "count": 1
+  }
+} 

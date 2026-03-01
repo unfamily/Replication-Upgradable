@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "BCB",
+    "ABA"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:gems/emerald"
+    },
+    "B": {
+      "tag": "c:ingots/netherite"
+    },
+    "C": {
+      "item": "rep_up:deep_matter_tank"
+    }
+  },
+  "result": {
+    "id": "rep_up:abyssal_matter_tank",
+    "count": 1
+  }
+} 
