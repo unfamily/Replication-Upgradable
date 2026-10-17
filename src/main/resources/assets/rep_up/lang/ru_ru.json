@@ -1,0 +1,18 @@
+{
+  "itemGroup.rep_up": "Replication Upgradable",
+  
+  "block.rep_up.rep_imp": "Улучшенный репликатор",
+  "item.rep_up.rep_imp": "Улучшенный репликатор",
+  
+  "block.rep_up.deep_matter_tank": "Глубокий резервуар материи",
+  "item.rep_up.deep_matter_tank": "Глубокий резервуар материи",
+  
+  "block.rep_up.abyssal_matter_tank": "Сверхглубокий резервуар материи",
+  "item.rep_up.abyssal_matter_tank": "Сверхглубокий резервуар материи",
+  
+  "block.rep_up.energy_mat": "Материализатор энергии",
+  "item.rep_up.energy_mat": "Материализатор энергии",
+  
+  "gui.rep_up.energy_mat.production": "Производство:",
+  "gui.rep_up.energy_mat.no_tanks_available": "Нет доступных резервуаров"
+}
