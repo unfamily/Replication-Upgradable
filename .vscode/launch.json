@@ -6,17 +6,17 @@
       "request": "launch",
       "name": "Client",
       "presentation": {
-        "group": "Mod Development - Replication-Upgradable",
+        "group": "Mod Development - Replication-Upgradable-26",
         "order": 0
       },
-      "projectName": "Replication-Upgradable",
+      "projectName": "Replication-Upgradable-26",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@/home/unfamily/IdeaProjects/Replication-Upgradable/build/moddev/clientRunProgramArgs.txt"
+        "@/home/unfamily/IdeaProjects/Replication-Upgradable-26/build/moddev/clientRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@/home/unfamily/IdeaProjects/Replication-Upgradable/build/moddev/clientRunVmArgs.txt",
-        "-Dfml.modFolders\u003drep_up%%/home/unfamily/IdeaProjects/Replication-Upgradable/bin/main"
+        "@/home/unfamily/IdeaProjects/Replication-Upgradable-26/build/moddev/clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003drep_up%%/home/unfamily/IdeaProjects/Replication-Upgradable-26/bin/main"
       ],
       "cwd": "${workspaceFolder}/run",
       "env": {},
@@ -28,17 +28,17 @@
       "request": "launch",
       "name": "Data",
       "presentation": {
-        "group": "Mod Development - Replication-Upgradable",
+        "group": "Mod Development - Replication-Upgradable-26",
         "order": 1
       },
-      "projectName": "Replication-Upgradable",
+      "projectName": "Replication-Upgradable-26",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@/home/unfamily/IdeaProjects/Replication-Upgradable/build/moddev/dataRunProgramArgs.txt"
+        "@/home/unfamily/IdeaProjects/Replication-Upgradable-26/build/moddev/dataRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@/home/unfamily/IdeaProjects/Replication-Upgradable/build/moddev/dataRunVmArgs.txt",
-        "-Dfml.modFolders\u003drep_up%%/home/unfamily/IdeaProjects/Replication-Upgradable/bin/main"
+        "@/home/unfamily/IdeaProjects/Replication-Upgradable-26/build/moddev/dataRunVmArgs.txt",
+        "-Dfml.modFolders\u003drep_up%%/home/unfamily/IdeaProjects/Replication-Upgradable-26/bin/main"
       ],
       "cwd": "${workspaceFolder}/run",
       "env": {},
@@ -50,17 +50,17 @@
       "request": "launch",
       "name": "GameTestServer",
       "presentation": {
-        "group": "Mod Development - Replication-Upgradable",
+        "group": "Mod Development - Replication-Upgradable-26",
         "order": 2
       },
-      "projectName": "Replication-Upgradable",
+      "projectName": "Replication-Upgradable-26",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@/home/unfamily/IdeaProjects/Replication-Upgradable/build/moddev/gameTestServerRunProgramArgs.txt"
+        "@/home/unfamily/IdeaProjects/Replication-Upgradable-26/build/moddev/gameTestServerRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@/home/unfamily/IdeaProjects/Replication-Upgradable/build/moddev/gameTestServerRunVmArgs.txt",
-        "-Dfml.modFolders\u003drep_up%%/home/unfamily/IdeaProjects/Replication-Upgradable/bin/main"
+        "@/home/unfamily/IdeaProjects/Replication-Upgradable-26/build/moddev/gameTestServerRunVmArgs.txt",
+        "-Dfml.modFolders\u003drep_up%%/home/unfamily/IdeaProjects/Replication-Upgradable-26/bin/main"
       ],
       "cwd": "${workspaceFolder}/run",
       "env": {},
@@ -72,17 +72,17 @@
       "request": "launch",
       "name": "Server",
       "presentation": {
-        "group": "Mod Development - Replication-Upgradable",
+        "group": "Mod Development - Replication-Upgradable-26",
         "order": 3
       },
-      "projectName": "Replication-Upgradable",
+      "projectName": "Replication-Upgradable-26",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
-        "@/home/unfamily/IdeaProjects/Replication-Upgradable/build/moddev/serverRunProgramArgs.txt"
+        "@/home/unfamily/IdeaProjects/Replication-Upgradable-26/build/moddev/serverRunProgramArgs.txt"
       ],
       "vmArgs": [
-        "@/home/unfamily/IdeaProjects/Replication-Upgradable/build/moddev/serverRunVmArgs.txt",
-        "-Dfml.modFolders\u003drep_up%%/home/unfamily/IdeaProjects/Replication-Upgradable/bin/main"
+        "@/home/unfamily/IdeaProjects/Replication-Upgradable-26/build/moddev/serverRunVmArgs.txt",
+        "-Dfml.modFolders\u003drep_up%%/home/unfamily/IdeaProjects/Replication-Upgradable-26/bin/main"
       ],
       "cwd": "${workspaceFolder}/run",
       "env": {},

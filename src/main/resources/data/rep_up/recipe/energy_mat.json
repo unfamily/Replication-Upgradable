@@ -6,24 +6,14 @@
     "AEA"
   ],
   "key": {
-    "A": {
-      "tag": "c:gems/emerald"
-    },
-    "B": {
-      "item": "minecraft:dragon_breath"
-    },
-    "C": {
-      "item": "replication:disintegrator"
-    },
-    "D": {
-      "tag": "c:nether_stars"
-    },
-    "E": {
-      "tag": "c:storage_blocks/redstone"
-    }
+    "A": "#c:gems/emerald",
+    "B": "minecraft:dragon_breath",
+    "C": "replication:disintegrator",
+    "D": "#c:nether_stars",
+    "E": "#c:storage_blocks/redstone"
   },
   "result": {
     "id": "rep_up:energy_mat",
     "count": 1
   }
-} 
+}

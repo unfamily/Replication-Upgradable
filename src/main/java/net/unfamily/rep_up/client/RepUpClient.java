@@ -4,40 +4,32 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.unfamily.rep_up.RepUp;
 import net.unfamily.rep_up.RepUpRegistry;
 import net.unfamily.rep_up.block.RepImpBlock;
 import net.unfamily.rep_up.block.RepImpBlockEntity;
-import net.unfamily.rep_up.block.tile.AbyssalMatterTankBlockEntity;
-import net.unfamily.rep_up.block.tile.DeepMatterTankBlockEntity;
-import net.unfamily.rep_up.block.tile.EnergyMaterializerBlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
-import org.joml.Matrix4f;
+import net.neoforged.neoforge.client.model.standalone.SimpleUnbakedStandaloneModel;
 
-/**
- * Client-only: BER registration and plate model for rep_imp.
- * Uses our own plate model (rep_up:block/rep_imp_plate) with rep_up textures.
- */
-@EventBusSubscriber(modid = RepUp.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = RepUp.MODID, value = Dist.CLIENT)
 public class RepUpClient {
 
-    private static final ResourceLocation PLATE_MODEL_ID = ResourceLocation.fromNamespaceAndPath(RepUp.MODID, "block/rep_imp_plate");
-    private static final ModelResourceLocation PLATE_MODEL_KEY = new ModelResourceLocation(PLATE_MODEL_ID, "standalone");
-
-    private static final ResourceLocation BLADE_MODEL_ID = ResourceLocation.fromNamespaceAndPath(RepUp.MODID, "block/energy_mat_blade");
-    private static final ModelResourceLocation BLADE_MODEL_KEY = new ModelResourceLocation(BLADE_MODEL_ID, "standalone");
+    private static final Identifier PLATE_MODEL_ID = Identifier.fromNamespaceAndPath(RepUp.MODID, "block/rep_imp_plate");
+    private static final Identifier BLADE_MODEL_ID = Identifier.fromNamespaceAndPath(RepUp.MODID, "block/energy_mat_blade");
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -48,68 +40,49 @@ public class RepUpClient {
     }
 
     @SubscribeEvent
-    public static void onRegisterAdditional(ModelEvent.RegisterAdditional event) {
-        event.register(PLATE_MODEL_KEY);
-        event.register(BLADE_MODEL_KEY);
+    public static void onRegisterStandalone(ModelEvent.RegisterStandalone event) {
+        event.register(RepImpRenderer.PLATE_KEY, SimpleUnbakedStandaloneModel.simpleModelWrapper(PLATE_MODEL_ID));
+        event.register(EnergyMaterializerRenderer.BLADE_KEY, SimpleUnbakedStandaloneModel.simpleModelWrapper(BLADE_MODEL_ID));
     }
 
     @SubscribeEvent
     public static void onBakingCompleted(ModelEvent.BakingCompleted event) {
-        BakedModel baked = event.getModels().get(PLATE_MODEL_KEY);
-        if (baked != null && baked != event.getModelManager().getMissingModel()) {
-            RepImpRenderer.setPlateModel(baked);
-        } else {
-            RepUp.LOGGER.warn("rep_imp: could not find baked model {} (key {})", PLATE_MODEL_ID, PLATE_MODEL_KEY);
-        }
-        BakedModel blade = event.getModels().get(BLADE_MODEL_KEY);
-        if (blade != null && blade != event.getModelManager().getMissingModel()) {
-            EnergyMaterializerRenderer.setBladeModel(blade);
-        } else {
-            RepUp.LOGGER.warn("energy_mat: could not find baked model {} (key {})", BLADE_MODEL_ID, BLADE_MODEL_KEY);
-        }
+        RepImpRenderer.setPlate(event.getModelManager().getStandaloneModel(RepImpRenderer.PLATE_KEY));
+        EnergyMaterializerRenderer.setBlade(event.getModelManager().getStandaloneModel(EnergyMaterializerRenderer.BLADE_KEY));
     }
 
     @SubscribeEvent
-    public static void onBlockHighlight(RenderHighlightEvent.Block event) {
-        if (event.getTarget() == null) return;
-        var level = Minecraft.getInstance().level;
-        if (level == null) return;
-        var pos = event.getTarget().getBlockPos();
-        BlockState state = level.getBlockState(pos);
+    public static void onBlockOutline(ExtractBlockOutlineRenderStateEvent event) {
+        BlockState state = event.getBlockState();
         if (!(state.getBlock() instanceof RepImpBlock repImpBlock)) return;
-        var be = level.getBlockEntity(pos);
-        if (!(be instanceof RepImpBlockEntity repImpBE)) return;
-        var body = repImpBlock.getShapePlate(state).getFirst();
-        var plate = repImpBlock.getShapePlate(state).getSecond();
-        event.setCanceled(true);
-        PoseStack stack = new PoseStack();
-        stack.pushPose();
-        Camera camera = event.getCamera();
-        double dx = camera.getPosition().x();
-        double dy = camera.getPosition().y();
-        double dz = camera.getPosition().z();
-        VertexConsumer buffer = event.getMultiBufferSource().getBuffer(RenderType.LINES);
-        drawShape(stack, buffer, body, pos.getX() - dx, pos.getY() - dy, pos.getZ() - dz, 0, 0, 0, 0.4f);
-        stack.translate(0, -RepImpBlockEntity.LOWER_PROGRESS, 0);
-        float progress = repImpBE.getMaxProgress() <= 0 ? 1f : (repImpBE.getProgress() / (float) repImpBE.getMaxProgress());
-        stack.translate(0, RepImpBlockEntity.LOWER_PROGRESS * progress, 0);
-        drawShape(stack, buffer, plate, pos.getX() - dx, pos.getY() - dy, pos.getZ() - dz, 0, 0, 0, 0.4f);
-        stack.popPose();
-    }
+        if (!(event.getLevel().getBlockEntity(event.getBlockPos()) instanceof RepImpBlockEntity repImpBE)) return;
 
-    private static void drawShape(PoseStack poseStack, VertexConsumer buffer, VoxelShape shape, double x, double y, double z, float r, float g, float b, float a) {
-        Matrix4f matrix = poseStack.last().pose();
-        PoseStack.Pose pose = poseStack.last();
-        shape.forAllEdges((x1, y1, z1, x2, y2, z2) -> {
-            float fx = (float) (x2 - x1);
-            float fy = (float) (y2 - y1);
-            float fz = (float) (z2 - z1);
-            float len = Mth.sqrt(fx * fx + fy * fy + fz * fz);
-            fx /= len;
-            fy /= len;
-            fz /= len;
-            buffer.addVertex(matrix, (float) (x1 + x), (float) (y1 + y), (float) (z1 + z)).setColor(r, g, b, a).setNormal(pose, fx, fy, fz);
-            buffer.addVertex(matrix, (float) (x2 + x), (float) (y2 + y), (float) (z2 + z)).setColor(r, g, b, a).setNormal(pose, fx, fy, fz);
+        var shapes = repImpBlock.getShapePlate(state);
+        VoxelShape body = shapes.getFirst();
+        VoxelShape plate = shapes.getSecond();
+        BlockPos pos = event.getBlockPos().immutable();
+        Camera camera = event.getCamera();
+        double dx = camera.position().x();
+        double dy = camera.position().y();
+        double dz = camera.position().z();
+        float progress = repImpBE.getMaxProgress() <= 0 ? 1f
+                : (repImpBE.getProgress() / (float) repImpBE.getMaxProgress());
+        float plateOffset = -RepImpBlockEntity.LOWER_PROGRESS + RepImpBlockEntity.LOWER_PROGRESS * progress;
+
+        BlockOutlineRenderState outlineState = event.getLevelRenderState().blockOutlineRenderState;
+        int outlineColor = outlineState != null && outlineState.highContrast() ? -11010079 : ARGB.black(102);
+        float lineWidth = Minecraft.getInstance().gameRenderer.getGameRenderState().windowRenderState.appropriateLineWidth;
+
+        event.addCustomRenderer((renderState, buffer, poseStack, translucentPass, levelRenderState) -> {
+            VertexConsumer builder = buffer.getBuffer(RenderTypes.lines());
+            ShapeRenderer.renderShape(poseStack, builder, body,
+                    pos.getX() - dx, pos.getY() - dy, pos.getZ() - dz, outlineColor, lineWidth);
+            poseStack.pushPose();
+            poseStack.translate(0, plateOffset, 0);
+            ShapeRenderer.renderShape(poseStack, builder, plate,
+                    pos.getX() - dx, pos.getY() - dy, pos.getZ() - dz, outlineColor, lineWidth);
+            poseStack.popPose();
+            return true;
         });
     }
 }

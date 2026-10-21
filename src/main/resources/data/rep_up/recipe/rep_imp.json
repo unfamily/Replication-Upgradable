@@ -6,21 +6,13 @@
     "ABA"
   ],
   "key": {
-    "A": {
-      "item": "minecraft:prismarine_shard"
-    },
-    "B": {
-      "tag": "c:gems/prismarine"
-    },
-    "C": {
-      "item": "replication:replicator"
-    },
-    "D": {
-      "tag": "c:gems/diamond"
-    }
+    "A": "minecraft:prismarine_shard",
+    "B": "#c:gems/prismarine",
+    "C": "replication:replicator",
+    "D": "#c:gems/diamond"
   },
   "result": {
     "id": "rep_up:rep_imp",
     "count": 1
   }
-} 
+}

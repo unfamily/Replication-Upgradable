@@ -10,6 +10,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -82,7 +84,7 @@ public class DeepMatterTankBlock extends RotatableBlock<DeepMatterTankBlockEntit
         super.setPlacedBy(level, pos, state, placer, stack);
         BlockEntity entity = level.getBlockEntity(pos);
         if (stack.has(ReplicationAttachments.TILE) && entity instanceof DeepMatterTankBlockEntity tile) {
-            entity.loadCustomOnly(stack.get(ReplicationAttachments.TILE), entity.getLevel().registryAccess());
+            entity.loadCustomOnly(TagValueInput.create(ProblemReporter.DISCARDING, entity.getLevel().registryAccess(), stack.get(ReplicationAttachments.TILE)));
             tile.markForUpdate();
         }
     }

@@ -20,16 +20,16 @@ import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.util.ARGB;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import com.buuz135.replication.util.TransferUtil;
 import net.unfamily.rep_up.Config;
 import net.unfamily.rep_up.data.EnergyMatRecipeLoader;
 import org.jetbrains.annotations.NotNull;
@@ -69,16 +69,16 @@ public class EnergyMaterializerBlockEntity extends ReplicationMachine<EnergyMate
     }
 
     /** Current selected matter type ID; null or empty means no production. */
-    public ResourceLocation getSelectedMatterId() {
+    public Identifier getSelectedMatterId() {
         if (selectedMatterIdStr == null || selectedMatterIdStr.isBlank()) return null;
         try {
-            return ResourceLocation.parse(selectedMatterIdStr);
+            return Identifier.parse(selectedMatterIdStr);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public void setSelectedMatterId(ResourceLocation id) {
+    public void setSelectedMatterId(Identifier id) {
         this.selectedMatterIdStr = id == null ? "" : id.toString();
     }
 
@@ -142,7 +142,7 @@ public class EnergyMaterializerBlockEntity extends ReplicationMachine<EnergyMate
     public void serverTick(Level level, BlockPos pos, BlockState state, EnergyMaterializerBlockEntity blockEntity) {
         super.serverTick(level, pos, state, blockEntity);
         int prod = getProduction();
-        ResourceLocation selected = getSelectedMatterId();
+        Identifier selected = getSelectedMatterId();
         if (selected == null) {
             if (noTanksAvailable) {
                 noTanksAvailable = false;
@@ -150,7 +150,7 @@ public class EnergyMaterializerBlockEntity extends ReplicationMachine<EnergyMate
             }
             return;
         }
-        IMatterType matterType = ReplicationRegistry.MATTER_TYPES_REGISTRY.get(selected);
+        IMatterType matterType = ReplicationRegistry.MATTER_TYPES_REGISTRY.getValue(selected);
         if (matterType == null || matterType == MatterType.EMPTY) return;
         int rfCost = EnergyMatRecipeLoader.getRfForMatter(selected);
         if (rfCost <= 0) return;
@@ -172,7 +172,7 @@ public class EnergyMaterializerBlockEntity extends ReplicationMachine<EnergyMate
         MatterStack toAdd = new MatterStack(matterType, matterAmount);
         double filled = tank.fillForced(toAdd, IFluidHandler.FluidAction.SIMULATE);
         if (filled < matterAmount) return;
-        getEnergyStorage().extractEnergy(totalRf, false);
+        TransferUtil.extractEnergy(getEnergyStorage(), totalRf, false);
         tank.fillForced(toAdd, IFluidHandler.FluidAction.EXECUTE);
         markComponentDirty();
         if (level instanceof ServerLevel serverLevel) {
@@ -183,7 +183,8 @@ public class EnergyMaterializerBlockEntity extends ReplicationMachine<EnergyMate
             float r = 0.4f + rng.nextFloat() * 0.6f;
             float g = 0.4f + rng.nextFloat() * 0.6f;
             float b = 0.4f + rng.nextFloat() * 0.6f;
-            serverLevel.sendParticles(new DustParticleOptions(new org.joml.Vector3f(r, g, b), 1.0f), px, py, pz, 1, 0, 0, 0, 0);
+            int color = ARGB.colorFromFloat(1.0f, r, g, b);
+            serverLevel.sendParticles(new DustParticleOptions(color, 1.0f), px, py, pz, 1, 0, 0, 0, 0);
         }
     }
 
@@ -191,20 +192,19 @@ public class EnergyMaterializerBlockEntity extends ReplicationMachine<EnergyMate
     public void handleButtonMessage(int id, Player player, CompoundTag compound) {
         super.handleButtonMessage(id, player, compound);
         if (id == 3000 && compound.contains("MatterId")) {
-            String idStr = compound.getString("MatterId");
-            setSelectedMatterId(idStr == null || idStr.isBlank() ? null : ResourceLocation.parse(idStr));
+            String idStr = compound.getStringOr("MatterId", "");
+            setSelectedMatterId(idStr.isBlank() ? null : Identifier.parse(idStr));
             markComponentDirty();
             markForUpdate();
         }
         if (id == 3001 && compound.contains("Production")) {
-            setProduction(compound.getInt("Production"));
+            setProduction(compound.getIntOr("Production", 1));
             syncObject(production);
             markComponentDirty();
             markForUpdate();
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void initClient() {
         super.initClient();

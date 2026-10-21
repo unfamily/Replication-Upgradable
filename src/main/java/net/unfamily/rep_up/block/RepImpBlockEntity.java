@@ -7,9 +7,6 @@ import com.buuz135.replication.calculation.ReplicationCalculation;
 import net.unfamily.rep_up.client.RepImpCraftingAddon;
 import net.unfamily.rep_up.client.RepImpMotorAddon;
 import com.hrznstudio.titanium.annotation.Save;
-import com.hrznstudio.titanium.api.IFactory;
-import com.hrznstudio.titanium.api.client.AssetTypes;
-import com.hrznstudio.titanium.api.client.IScreenAddon;
 import com.hrznstudio.titanium.api.filter.FilterSlot;
 import com.hrznstudio.titanium.api.redstone.IRedstoneReader;
 import com.hrznstudio.titanium.api.redstone.IRedstoneState;
@@ -17,20 +14,14 @@ import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.block.redstone.RedstoneAction;
 import com.hrznstudio.titanium.block.redstone.RedstoneManager;
 import com.hrznstudio.titanium.block.redstone.RedstoneState;
-import com.hrznstudio.titanium.client.screen.addon.ItemstackFilterScreenAddon;
-import com.hrznstudio.titanium.client.screen.asset.IAssetProvider;
 import com.hrznstudio.titanium.component.button.RedstoneControlButtonComponent;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
 import com.hrznstudio.titanium.filter.ItemStackFilter;
-import com.hrznstudio.titanium.util.AssetUtil;
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.buuz135.replication.ReplicationConfig;
+import com.buuz135.replication.util.TransferUtil;
 import net.unfamily.rep_up.Config;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -41,15 +32,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Replicator block entity with half duration (config: rep_imp.maxProgress).
@@ -109,34 +93,11 @@ public class RepImpBlockEntity extends com.buuz135.replication.block.tile.Replic
             public void setFilter(int slot, ItemStack stack) {
                 super.setFilter(slot, stack.getItem().getDefaultInstance());
             }
-
-            @OnlyIn(Dist.CLIENT)
-            @Override
-            public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
-                List<IFactory<? extends IScreenAddon>> list = new ArrayList<>();
-                list.add(() -> new ItemstackFilterScreenAddon(this) {
-                    @Override
-                    public void drawBackgroundLayer(GuiGraphics guiGraphics, Screen screen, IAssetProvider provider, int guiX, int guiY, int mouseX, int mouseY, float partialTicks) {
-                        for (FilterSlot<ItemStack> filterSlot : infiniteCrafting.getFilterSlots()) {
-                            if (filterSlot != null) {
-                                AssetUtil.drawAsset(guiGraphics, screen, Objects.requireNonNull(provider.getAsset(AssetTypes.SLOT)), guiX + filterSlot.getX(), guiY + filterSlot.getY());
-                                RenderSystem.setShaderColor(1, 1, 1, 1);
-                                if (!filterSlot.getFilter().isEmpty()) {
-                                    Lighting.setupFor3DItems();
-                                    guiGraphics.renderItem(filterSlot.getFilter(), filterSlot.getX() + guiX + 1, filterSlot.getY() + guiY + 1);
-                                }
-                            }
-                        }
-                    }
-                });
-                return list;
-            }
         };
         this.infiniteCrafting.getFilterSlots()[0] = new FilterSlot<>(43, 28, 0, ItemStack.EMPTY);
         addFilter(infiniteCrafting);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void initClient() {
         super.initClient();
@@ -242,7 +203,7 @@ public class RepImpBlockEntity extends com.buuz135.replication.block.tile.Replic
             if (this.action == 0) {
                 if (this.progress >= this.getMaxProgress()) {
                     if (!this.isCurrentTaskAFailure) {
-                        if (ItemHandlerHelper.insertItem(this.output, this.craftingStack.copy(), true).isEmpty()) {
+                        if (TransferUtil.insertItem(this.output, this.craftingStack.copy(), true).isEmpty()) {
                             this.action = 1;
                             syncObject(this.action);
                             replicateItem();
@@ -254,13 +215,13 @@ public class RepImpBlockEntity extends com.buuz135.replication.block.tile.Replic
                         syncObject(this.isCurrentTaskAFailure);
                     }
                 } else {
-                    getEnergyStorage().extractEnergy(this.getPowerConsumption(), false);
+                    TransferUtil.extractEnergy(getEnergyStorage(), this.getPowerConsumption(), false);
                     ++this.progress;
                 }
                 syncObject(this.progress);
             } else {
                 --this.progress;
-                getEnergyStorage().extractEnergy(this.getPowerConsumption(), false);
+                TransferUtil.extractEnergy(getEnergyStorage(), this.getPowerConsumption(), false);
                 syncObject(this.progress);
                 if (this.progress <= 0) {
                     this.action = 0;
@@ -287,16 +248,16 @@ public class RepImpBlockEntity extends com.buuz135.replication.block.tile.Replic
         this.cachedReplicationTask.finalizeReplication(this.getLevel(), this.getBlockPos(), this.getNetwork());
         this.getNetwork().onTaskValueChanged(this.cachedReplicationTask, (ServerLevel) this.getLevel());
         if (!this.getBlockPos().equals(this.cachedReplicationTask.getSource())) {
-            var capability = this.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, this.cachedReplicationTask.getSource(), Direction.UP);
+            var capability = this.getLevel().getCapability(Capabilities.Item.BLOCK, this.cachedReplicationTask.getSource(), Direction.UP);
             if (capability != null) {
-                if (!ItemHandlerHelper.insertItem(capability, this.cachedReplicationTask.getReplicatingStack().copyWithCount(1), false).isEmpty()) {
-                    ItemHandlerHelper.insertItem(this.output, this.cachedReplicationTask.getReplicatingStack().copyWithCount(1), false);
+                if (!TransferUtil.insertItem(capability, this.cachedReplicationTask.getReplicatingStack().copyWithCount(1), false).isEmpty()) {
+                    TransferUtil.insertItem(this.output, this.cachedReplicationTask.getReplicatingStack().copyWithCount(1), false);
                 }
             } else {
-                ItemHandlerHelper.insertItem(this.output, this.cachedReplicationTask.getReplicatingStack().copyWithCount(1), false);
+                TransferUtil.insertItem(this.output, this.cachedReplicationTask.getReplicatingStack().copyWithCount(1), false);
             }
         } else {
-            ItemHandlerHelper.insertItem(this.output, this.cachedReplicationTask.getReplicatingStack().copyWithCount(1), false);
+            TransferUtil.insertItem(this.output, this.cachedReplicationTask.getReplicatingStack().copyWithCount(1), false);
         }
         this.cachedReplicationTask = null;
         this.craftingStack = ItemStack.EMPTY;
@@ -344,7 +305,7 @@ public class RepImpBlockEntity extends com.buuz135.replication.block.tile.Replic
     public void handleButtonMessage(int id, Player player, CompoundTag compound) {
         super.handleButtonMessage(id, player, compound);
         if (id == 124578) {
-            motorSpeedMultiplier = compound.getInt("Multiplier");
+            motorSpeedMultiplier = compound.getIntOr("Multiplier", 100);
             if (motorSpeedMultiplier > 100) motorSpeedMultiplier = 100;
             if (motorSpeedMultiplier < 20) motorSpeedMultiplier = 20;
             syncObject(motorSpeedMultiplier);

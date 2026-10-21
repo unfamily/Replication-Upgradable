@@ -2,7 +2,7 @@ package net.unfamily.rep_up;
 
 import com.buuz135.replication.ReplicationRegistry;
 import com.hrznstudio.titanium.nbthandler.NBTManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
@@ -36,6 +36,19 @@ public class RepUp {
         modEventBus.addListener(this::onBuildCreativeTab);
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.addListener(RepUp::onRightClickBlock);
+        NeoForge.EVENT_BUS.addListener(RepUp::onTagsUpdated);
+    }
+
+    private static void onTagsUpdated(net.neoforged.neoforge.event.TagsUpdatedEvent event) {
+        if (event.getUpdateCause() != net.neoforged.neoforge.event.TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD) {
+            return;
+        }
+        var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        if (server != null) {
+            EnergyMatRecipeLoader.load(server.getResourceManager());
+        } else {
+            EnergyMatRecipeLoader.load();
+        }
     }
 
     /** Allow applying Replication's enclosure and motor items to rep_imp. */
@@ -67,7 +80,7 @@ public class RepUp {
     }
 
     private void onBuildCreativeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().location().equals(ResourceLocation.fromNamespaceAndPath("replication", "main"))) {
+        if (event.getTabKey().identifier().equals(Identifier.fromNamespaceAndPath("replication", "main"))) {
             event.accept(new ItemStack(RepUpRegistry.REP_IMP.get()));
             event.accept(new ItemStack(RepUpRegistry.DEEP_MATTER_TANK.get()));
             event.accept(new ItemStack(RepUpRegistry.ABYSSAL_MATTER_TANK.get()));

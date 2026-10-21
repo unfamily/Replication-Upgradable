@@ -34,7 +34,7 @@ public class RepUpRegistry {
     @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RepImpBlockEntity>> BLOCK_ENTITY_REP_IMP =
             (DeferredHolder<BlockEntityType<?>, BlockEntityType<RepImpBlockEntity>>) (Object) BLOCK_ENTITY_TYPES.register("rep_imp",
-                    () -> BlockEntityType.Builder.of(((RepImpBlock) REP_IMP.get()).getTileEntityFactory(), REP_IMP.get()).build(null));
+                    () -> new BlockEntityType<>(((RepImpBlock) REP_IMP.get()).getTileEntityFactory(), REP_IMP.get()));
 
     private static Supplier<BlockEntityType<DeepMatterTankBlockEntity>> deepMatterTankType;
     private static Supplier<BlockEntityType<AbyssalMatterTankBlockEntity>> abyssalMatterTankType;
@@ -47,7 +47,7 @@ public class RepUpRegistry {
     @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DeepMatterTankBlockEntity>> BLOCK_ENTITY_DEEP_MATTER_TANK =
             (DeferredHolder<BlockEntityType<?>, BlockEntityType<DeepMatterTankBlockEntity>>) (Object) BLOCK_ENTITY_TYPES.register("deep_matter_tank",
-                    () -> BlockEntityType.Builder.of(((DeepMatterTankBlock) DEEP_MATTER_TANK.get()).getTileEntityFactory(), DEEP_MATTER_TANK.get()).build(null));
+                    () -> new BlockEntityType<>(((DeepMatterTankBlock) DEEP_MATTER_TANK.get()).getTileEntityFactory(), DEEP_MATTER_TANK.get()));
 
     public static final DeferredHolder<Block, Block> ABYSSAL_MATTER_TANK = BLOCKS.register("abyssal_matter_tank",
             () -> new AbyssalMatterTankBlock("abyssal_matter_tank", () -> abyssalMatterTankType.get()));
@@ -56,7 +56,7 @@ public class RepUpRegistry {
     @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AbyssalMatterTankBlockEntity>> BLOCK_ENTITY_ABYSSAL_MATTER_TANK =
             (DeferredHolder<BlockEntityType<?>, BlockEntityType<AbyssalMatterTankBlockEntity>>) (Object) BLOCK_ENTITY_TYPES.register("abyssal_matter_tank",
-                    () -> BlockEntityType.Builder.of(((AbyssalMatterTankBlock) ABYSSAL_MATTER_TANK.get()).getTileEntityFactory(), ABYSSAL_MATTER_TANK.get()).build(null));
+                    () -> new BlockEntityType<>(((AbyssalMatterTankBlock) ABYSSAL_MATTER_TANK.get()).getTileEntityFactory(), ABYSSAL_MATTER_TANK.get()));
 
     public static final DeferredHolder<Block, Block> ENERGY_MAT = BLOCKS.register("energy_mat",
             () -> new EnergyMaterializerBlock("energy_mat", () -> energyMatType.get()));
@@ -65,7 +65,7 @@ public class RepUpRegistry {
     @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyMaterializerBlockEntity>> BLOCK_ENTITY_ENERGY_MAT =
             (DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyMaterializerBlockEntity>>) (Object) BLOCK_ENTITY_TYPES.register("energy_mat",
-                    () -> BlockEntityType.Builder.of(((EnergyMaterializerBlock) ENERGY_MAT.get()).getTileEntityFactory(), ENERGY_MAT.get()).build(null));
+                    () -> new BlockEntityType<>(((EnergyMaterializerBlock) ENERGY_MAT.get()).getTileEntityFactory(), ENERGY_MAT.get()));
 
     public static void register(IEventBus modEventBus) {
         deepMatterTankType = () -> BLOCK_ENTITY_DEEP_MATTER_TANK.get();
@@ -79,17 +79,17 @@ public class RepUpRegistry {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 BLOCK_ENTITY_REP_IMP.get(),
                 (blockEntity, context) -> blockEntity.getEnergyStorage()
         );
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 BLOCK_ENTITY_REP_IMP.get(),
                 (blockEntity, context) -> blockEntity.getItemHandler(context)
         );
         event.registerBlock(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 (level, blockPos, blockState, blockEntity, direction) -> {
                     if (blockState.getBlock() instanceof INetworkDirectionalConnection connection
                             && connection.canConnect(level, blockPos, blockState, direction)
@@ -101,12 +101,12 @@ public class RepUpRegistry {
                 REP_IMP.get()
         );
         event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 BLOCK_ENTITY_ENERGY_MAT.get(),
                 (blockEntity, context) -> blockEntity.getEnergyStorage()
         );
         event.registerBlock(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 (level, blockPos, blockState, blockEntity, direction) -> {
                     if (blockState.getBlock() instanceof INetworkDirectionalConnection connection
                             && connection.canConnect(level, blockPos, blockState, direction)

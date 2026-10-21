@@ -21,16 +21,14 @@ import com.hrznstudio.titanium.component.button.ButtonComponent;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.world.level.storage.ValueInput;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -83,13 +81,12 @@ public abstract class RepUpBaseMatterTankBlockEntity<T extends RepUpBaseMatterTa
             syncObject(this.voidExcess);
         }
         if (id == 124578) {
-            this.tankPriority = compound.getInt("Priority");
+            this.tankPriority = compound.getIntOr("Priority", 0);
             syncObject(this.tankPriority);
         }
         markComponentDirty();
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void initClient() {
         super.initClient();
@@ -109,12 +106,12 @@ public abstract class RepUpBaseMatterTankBlockEntity<T extends RepUpBaseMatterTa
     }
 
     @Override
-    public ItemInteractionResult onActivated(Player playerIn, InteractionHand hand, Direction facing, double hitX, double hitY, double hitZ) {
-        if (super.onActivated(playerIn, hand, facing, hitX, hitY, hitZ) == ItemInteractionResult.SUCCESS) {
-            return ItemInteractionResult.SUCCESS;
+    public InteractionResult onActivated(Player playerIn, InteractionHand hand, Direction facing, double hitX, double hitY, double hitZ) {
+        if (super.onActivated(playerIn, hand, facing, hitX, hitY, hitZ) == InteractionResult.SUCCESS) {
+            return InteractionResult.SUCCESS;
         }
         openGui(playerIn);
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -134,7 +131,7 @@ public abstract class RepUpBaseMatterTankBlockEntity<T extends RepUpBaseMatterTa
 
     @Override
     public int getTitleColor() {
-        return 0x72e567;
+        return 0xff72e567;
     }
 
     @Override
@@ -143,11 +140,10 @@ public abstract class RepUpBaseMatterTankBlockEntity<T extends RepUpBaseMatterTa
     }
 
     @Override
-    public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
-        super.loadAdditional(compound, provider);
-        if (compound.contains("tank")) {
-            this.lockableMatterTankBundle.getTank().deserializeNBT(provider, compound.getCompound("tank"));
-        }
+    public void loadAdditional(ValueInput compound) {
+        super.loadAdditional(compound);
+        compound.read("tank", CompoundTag.CODEC).ifPresent(tank ->
+                this.lockableMatterTankBundle.getTank().deserializeNBT(compound.lookup(), tank));
     }
 
     public boolean isVoidExcess() {
