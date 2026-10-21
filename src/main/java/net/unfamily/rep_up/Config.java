@@ -40,17 +40,6 @@ public class Config {
         MATTER_TANKS.pop();
     }
 
-    private static final ModConfigSpec.Builder DEV = BUILDER.comment("Dev / external scripts. Base path for rep_up external data (e.g. energy_mat.json).").push("dev");
-
-    /** Base directory for rep_up external scripts; energy_mat uses <path>/energy_mat.json. Reusable for other features later. */
-    public static final ModConfigSpec.ConfigValue<String> EXTERNAL_SCRIPTS_PATH = DEV
-            .comment("Directory for rep_up external scripts. Energy Materializer: <this>/energy_mat.json. Default: kubejs/external_scripts/rep_up")
-            .define("externalScriptsPath", "kubejs/external_scripts/rep_up");
-
-    static {
-        DEV.pop();
-    }
-
     private static final ModConfigSpec.Builder ENERGY_MATERIALIZER = BUILDER.comment("Energy Materializer (energy_mat): RF to matter conversion.").push("energy_materializer");
 
     /** Energy storage capacity (RF). Default very high. */
@@ -62,6 +51,11 @@ public class Config {
     public static final ModConfigSpec.IntValue ENERGY_MAT_MAX_PRODUCTION = ENERGY_MATERIALIZER
             .comment("Maximum production multiplier for the Energy Materializer (1–100). Production multiplies both energy cost and matter output per tick.")
             .defineInRange("maxProduction", 100, 1, 100);
+
+    /** RF used for unknown matter types and for load entries that omit {@code rf}. Default 10000. */
+    public static final ModConfigSpec.IntValue ENERGY_MAT_FALLBACK_RF = ENERGY_MATERIALIZER
+            .comment("Fallback RF cost per matter unit when the matter id is not listed in load JSON (or an entry omits rf). Default: 10000.")
+            .defineInRange("fallbackRf", 10000, 1, Integer.MAX_VALUE);
 
     static {
         ENERGY_MATERIALIZER.pop();

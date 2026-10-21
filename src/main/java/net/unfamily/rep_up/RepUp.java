@@ -36,6 +36,19 @@ public class RepUp {
         modEventBus.addListener(this::onBuildCreativeTab);
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.addListener(RepUp::onRightClickBlock);
+        NeoForge.EVENT_BUS.addListener(RepUp::onTagsUpdated);
+    }
+
+    private static void onTagsUpdated(net.neoforged.neoforge.event.TagsUpdatedEvent event) {
+        if (event.getUpdateCause() != net.neoforged.neoforge.event.TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD) {
+            return;
+        }
+        var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        if (server != null) {
+            EnergyMatRecipeLoader.load(server.getResourceManager());
+        } else {
+            EnergyMatRecipeLoader.load();
+        }
     }
 
     /** Allow applying Replication's enclosure and motor items to rep_imp. */

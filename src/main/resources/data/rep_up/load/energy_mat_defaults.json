@@ -1,0 +1,13 @@
+{
+  "type": "rep_up:energy_mat",
+  "entries": [
+    { "id": "replication:earth", "rf": 12000 },
+    { "id": "replication:nether", "rf": 25000 },
+    { "id": "replication:organic", "rf": 15000 },
+    { "id": "replication:ender", "rf": 28000 },
+    { "id": "replication:metallic", "rf": 20000 },
+    { "id": "replication:precious", "rf": 35000 },
+    { "id": "replication:living", "rf": 22000 },
+    { "id": "replication:quantum", "rf": 40000 }
+  ]
+}
