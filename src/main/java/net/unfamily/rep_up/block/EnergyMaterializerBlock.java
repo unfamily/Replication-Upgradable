@@ -8,8 +8,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -22,8 +22,8 @@ public class EnergyMaterializerBlock extends RotatableBlock<EnergyMaterializerBl
 
     private final Supplier<BlockEntityType<EnergyMaterializerBlockEntity>> typeGetter;
 
-    public EnergyMaterializerBlock(String name, Supplier<BlockEntityType<EnergyMaterializerBlockEntity>> typeGetter) {
-        super(name, Properties.ofFullCopy(Blocks.IRON_BLOCK), EnergyMaterializerBlockEntity.class);
+    public EnergyMaterializerBlock(BlockBehaviour.Properties properties, Supplier<BlockEntityType<EnergyMaterializerBlockEntity>> typeGetter) {
+        super("energy_mat", properties, EnergyMaterializerBlockEntity.class);
         this.typeGetter = typeGetter;
     }
 

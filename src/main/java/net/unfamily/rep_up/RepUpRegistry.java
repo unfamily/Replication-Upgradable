@@ -4,13 +4,15 @@ import com.buuz135.replication.block.tile.ReplicationMachine;
 import com.hrznstudio.titanium.block_network.INetworkDirectionalConnection;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.unfamily.rep_up.block.AbyssalMatterTankBlock;
 import net.unfamily.rep_up.block.DeepMatterTankBlock;
@@ -25,47 +27,49 @@ import java.util.function.Supplier;
 
 public class RepUpRegistry {
 
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, RepUp.MODID);
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, RepUp.MODID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(RepUp.MODID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(RepUp.MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, RepUp.MODID);
 
-    public static final DeferredHolder<Block, Block> REP_IMP = BLOCKS.register("rep_imp", RepImpBlock::new);
-    public static final DeferredHolder<Item, Item> REP_IMP_ITEM = ITEMS.register("rep_imp", () -> new BlockItem(REP_IMP.get(), new Item.Properties()));
+    public static final DeferredBlock<RepImpBlock> REP_IMP = BLOCKS.registerBlock("rep_imp",
+            RepImpBlock::new,
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
+    public static final DeferredItem<BlockItem> REP_IMP_ITEM = ITEMS.registerSimpleBlockItem(REP_IMP);
     @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RepImpBlockEntity>> BLOCK_ENTITY_REP_IMP =
             (DeferredHolder<BlockEntityType<?>, BlockEntityType<RepImpBlockEntity>>) (Object) BLOCK_ENTITY_TYPES.register("rep_imp",
-                    () -> new BlockEntityType<>(((RepImpBlock) REP_IMP.get()).getTileEntityFactory(), REP_IMP.get()));
+                    () -> new BlockEntityType<>(REP_IMP.get().getTileEntityFactory(), REP_IMP.get()));
 
     private static Supplier<BlockEntityType<DeepMatterTankBlockEntity>> deepMatterTankType;
     private static Supplier<BlockEntityType<AbyssalMatterTankBlockEntity>> abyssalMatterTankType;
     private static Supplier<BlockEntityType<EnergyMaterializerBlockEntity>> energyMatType;
 
-    public static final DeferredHolder<Block, Block> DEEP_MATTER_TANK = BLOCKS.register("deep_matter_tank",
-            () -> new DeepMatterTankBlock("deep_matter_tank", () -> deepMatterTankType.get()));
-    public static final DeferredHolder<Item, Item> DEEP_MATTER_TANK_ITEM = ITEMS.register("deep_matter_tank",
-            () -> new BlockItem(DEEP_MATTER_TANK.get(), new Item.Properties()));
+    public static final DeferredBlock<DeepMatterTankBlock> DEEP_MATTER_TANK = BLOCKS.registerBlock("deep_matter_tank",
+            props -> new DeepMatterTankBlock(props, () -> deepMatterTankType.get()),
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
+    public static final DeferredItem<BlockItem> DEEP_MATTER_TANK_ITEM = ITEMS.registerSimpleBlockItem(DEEP_MATTER_TANK);
     @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DeepMatterTankBlockEntity>> BLOCK_ENTITY_DEEP_MATTER_TANK =
             (DeferredHolder<BlockEntityType<?>, BlockEntityType<DeepMatterTankBlockEntity>>) (Object) BLOCK_ENTITY_TYPES.register("deep_matter_tank",
-                    () -> new BlockEntityType<>(((DeepMatterTankBlock) DEEP_MATTER_TANK.get()).getTileEntityFactory(), DEEP_MATTER_TANK.get()));
+                    () -> new BlockEntityType<>(DEEP_MATTER_TANK.get().getTileEntityFactory(), DEEP_MATTER_TANK.get()));
 
-    public static final DeferredHolder<Block, Block> ABYSSAL_MATTER_TANK = BLOCKS.register("abyssal_matter_tank",
-            () -> new AbyssalMatterTankBlock("abyssal_matter_tank", () -> abyssalMatterTankType.get()));
-    public static final DeferredHolder<Item, Item> ABYSSAL_MATTER_TANK_ITEM = ITEMS.register("abyssal_matter_tank",
-            () -> new BlockItem(ABYSSAL_MATTER_TANK.get(), new Item.Properties()));
+    public static final DeferredBlock<AbyssalMatterTankBlock> ABYSSAL_MATTER_TANK = BLOCKS.registerBlock("abyssal_matter_tank",
+            props -> new AbyssalMatterTankBlock(props, () -> abyssalMatterTankType.get()),
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
+    public static final DeferredItem<BlockItem> ABYSSAL_MATTER_TANK_ITEM = ITEMS.registerSimpleBlockItem(ABYSSAL_MATTER_TANK);
     @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AbyssalMatterTankBlockEntity>> BLOCK_ENTITY_ABYSSAL_MATTER_TANK =
             (DeferredHolder<BlockEntityType<?>, BlockEntityType<AbyssalMatterTankBlockEntity>>) (Object) BLOCK_ENTITY_TYPES.register("abyssal_matter_tank",
-                    () -> new BlockEntityType<>(((AbyssalMatterTankBlock) ABYSSAL_MATTER_TANK.get()).getTileEntityFactory(), ABYSSAL_MATTER_TANK.get()));
+                    () -> new BlockEntityType<>(ABYSSAL_MATTER_TANK.get().getTileEntityFactory(), ABYSSAL_MATTER_TANK.get()));
 
-    public static final DeferredHolder<Block, Block> ENERGY_MAT = BLOCKS.register("energy_mat",
-            () -> new EnergyMaterializerBlock("energy_mat", () -> energyMatType.get()));
-    public static final DeferredHolder<Item, Item> ENERGY_MAT_ITEM = ITEMS.register("energy_mat",
-            () -> new BlockItem(ENERGY_MAT.get(), new Item.Properties()));
+    public static final DeferredBlock<EnergyMaterializerBlock> ENERGY_MAT = BLOCKS.registerBlock("energy_mat",
+            props -> new EnergyMaterializerBlock(props, () -> energyMatType.get()),
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
+    public static final DeferredItem<BlockItem> ENERGY_MAT_ITEM = ITEMS.registerSimpleBlockItem(ENERGY_MAT);
     @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyMaterializerBlockEntity>> BLOCK_ENTITY_ENERGY_MAT =
             (DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyMaterializerBlockEntity>>) (Object) BLOCK_ENTITY_TYPES.register("energy_mat",
-                    () -> new BlockEntityType<>(((EnergyMaterializerBlock) ENERGY_MAT.get()).getTileEntityFactory(), ENERGY_MAT.get()));
+                    () -> new BlockEntityType<>(ENERGY_MAT.get().getTileEntityFactory(), ENERGY_MAT.get()));
 
     public static void register(IEventBus modEventBus) {
         deepMatterTankType = () -> BLOCK_ENTITY_DEEP_MATTER_TANK.get();

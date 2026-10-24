@@ -12,8 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -31,8 +31,8 @@ public class RepImpBlock extends RotatableBlock<RepImpBlockEntity> implements IN
     public static final BooleanProperty HAS_ENCLOSURE = BooleanProperty.create("has_enclosure");
     public static final BooleanProperty HAS_MOTOR = BooleanProperty.create("has_motor");
 
-    public RepImpBlock() {
-        super("rep_imp", Properties.ofFullCopy(Blocks.IRON_BLOCK), RepImpBlockEntity.class);
+    public RepImpBlock(BlockBehaviour.Properties properties) {
+        super("rep_imp", properties, RepImpBlockEntity.class);
         registerDefaultState(defaultBlockState().setValue(HAS_ENCLOSURE, false).setValue(HAS_MOTOR, false));
     }
 

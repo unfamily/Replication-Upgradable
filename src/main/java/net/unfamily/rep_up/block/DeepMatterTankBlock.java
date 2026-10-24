@@ -15,9 +15,9 @@ import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -33,8 +33,8 @@ public class DeepMatterTankBlock extends RotatableBlock<DeepMatterTankBlockEntit
 
     private final Supplier<BlockEntityType<DeepMatterTankBlockEntity>> typeGetter;
 
-    public DeepMatterTankBlock(String name, Supplier<BlockEntityType<DeepMatterTankBlockEntity>> typeGetter) {
-        super(name, Properties.ofFullCopy(Blocks.IRON_BLOCK), DeepMatterTankBlockEntity.class);
+    public DeepMatterTankBlock(BlockBehaviour.Properties properties, Supplier<BlockEntityType<DeepMatterTankBlockEntity>> typeGetter) {
+        super("deep_matter_tank", properties, DeepMatterTankBlockEntity.class);
         this.typeGetter = typeGetter;
     }
 

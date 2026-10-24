@@ -15,9 +15,9 @@ import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -33,8 +33,8 @@ public class AbyssalMatterTankBlock extends RotatableBlock<AbyssalMatterTankBloc
 
     private final Supplier<BlockEntityType<AbyssalMatterTankBlockEntity>> typeGetter;
 
-    public AbyssalMatterTankBlock(String name, Supplier<BlockEntityType<AbyssalMatterTankBlockEntity>> typeGetter) {
-        super(name, Properties.ofFullCopy(Blocks.IRON_BLOCK), AbyssalMatterTankBlockEntity.class);
+    public AbyssalMatterTankBlock(BlockBehaviour.Properties properties, Supplier<BlockEntityType<AbyssalMatterTankBlockEntity>> typeGetter) {
+        super("abyssal_matter_tank", properties, AbyssalMatterTankBlockEntity.class);
         this.typeGetter = typeGetter;
     }
 
